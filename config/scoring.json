@@ -1,0 +1,20 @@
+{
+  "tone_points": {
+    "not_recommended": 0.25,
+    "negative": 0.4,
+    "neutral": 0.65,
+    "recommended": 1.0
+  },
+  "position_factors": {
+    "1": 1.0,
+    "2": 0.8,
+    "3": 0.6,
+    "4_plus": 0.4
+  },
+  "priority_min": 1,
+  "priority_max": 3,
+  "expected_engines": ["chatgpt", "google_ai_overview", "perplexity"],
+  "minimum_week_coverage": 0.95,
+  "variation_floor_points": 2.0,
+  "historical_variation_weeks": 4
+}

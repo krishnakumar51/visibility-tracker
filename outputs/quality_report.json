@@ -1,0 +1,150 @@
+{
+  "source_input": "D:\\visibility-tracker\\extras\\corvane_data_pack\\responses.jsonl",
+  "parsed_response_records": 518,
+  "malformed_records": [],
+  "unique_response_ids": 510,
+  "duplicate_response_ids": [
+    {
+      "response_id": "r_10f51a4289ac",
+      "record_count": 2,
+      "source_lines": [
+        112,
+        113
+      ]
+    },
+    {
+      "response_id": "r_13c6c152435e",
+      "record_count": 2,
+      "source_lines": [
+        100,
+        101
+      ]
+    },
+    {
+      "response_id": "r_16541fad2a1e",
+      "record_count": 2,
+      "source_lines": [
+        106,
+        107
+      ]
+    },
+    {
+      "response_id": "r_8a03c2511567",
+      "record_count": 2,
+      "source_lines": [
+        108,
+        109
+      ]
+    },
+    {
+      "response_id": "r_a2e86cb73e6f",
+      "record_count": 2,
+      "source_lines": [
+        96,
+        97
+      ]
+    },
+    {
+      "response_id": "r_ab0b9d6c0cd0",
+      "record_count": 2,
+      "source_lines": [
+        110,
+        111
+      ]
+    },
+    {
+      "response_id": "r_cbb3c24b5c1a",
+      "record_count": 2,
+      "source_lines": [
+        102,
+        103
+      ]
+    },
+    {
+      "response_id": "r_e6d46551f510",
+      "record_count": 2,
+      "source_lines": [
+        125,
+        126
+      ]
+    }
+  ],
+  "status_counts": {
+    "success": 515,
+    "failed": 3
+  },
+  "week_counts": {
+    "1": {
+      "success": 89,
+      "failed": 1
+    },
+    "2": {
+      "success": 98
+    },
+    "3": {
+      "success": 90
+    },
+    "4": {
+      "success": 88,
+      "failed": 2
+    },
+    "5": {
+      "success": 60
+    },
+    "6": {
+      "success": 90
+    }
+  },
+  "engine_counts": {
+    "chatgpt": 188,
+    "perplexity": 150,
+    "google_ai_overview": 180
+  },
+  "source_schema_counts": {
+    "response_text": 428,
+    "answer": 90
+  },
+  "tone_distribution": {
+    "recommended": 497,
+    "neutral": 566,
+    "negative": 96,
+    "not_recommended": 90
+  },
+  "mentions_by_brand": {
+    "trakvia": 285,
+    "corvane": 295,
+    "routelyne": 237,
+    "fleetora": 120,
+    "novahaul": 126,
+    "gridwell": 186
+  },
+  "wrong_fact_count": 47,
+  "pipeline_issues": [
+    "r_e6e2b473eced:source_error:timeout",
+    "r_043fbf2f0c11:source_error:timeout",
+    "r_d05c95a79550:source_error:timeout"
+  ],
+  "manual_review": {
+    "sample_size": 15,
+    "random_seed": 42,
+    "response_ids": [
+      "r_0b1a37fccc56",
+      "r_310a72fff75f",
+      "r_5b7cdcc2a1f4",
+      "r_653a60305014",
+      "r_6cf003b4fe1c",
+      "r_6d1180cb1665",
+      "r_6e1ebbbb5fa9",
+      "r_99758b95d5ba",
+      "r_af07f3755749",
+      "r_b4d2633540f5",
+      "r_c34099737108",
+      "r_dfc711b7343a",
+      "r_e475b7053f3d",
+      "r_e8b0a891b6b3",
+      "r_e918791dfb27"
+    ],
+    "existing_annotations_preserved": true
+  },
+  "failed_export_note": "mentions.csv encodes failed/unusable rows as false to satisfy its mandated schema; consult evaluation.json response status before interpreting these rows."
+}

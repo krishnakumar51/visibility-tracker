@@ -1,0 +1,51 @@
+{
+  "status": "complete",
+  "rows": 90,
+  "comparable_rows": {
+    "mention": 90,
+    "position": 37,
+    "tone": 37
+  },
+  "mention_reviewed": 90,
+  "position_reviewed": 37,
+  "tone_reviewed": 37,
+  "mention_accuracy": 100.0,
+  "position_accuracy": 100.0,
+  "tone_accuracy": 89.19,
+  "mention_disagreements": [],
+  "position_disagreements": [],
+  "tone_disagreements": [
+    {
+      "type": "tone",
+      "response_id": "r_0b1a37fccc56",
+      "brand": "fleetora",
+      "answer_text": "Several providers are commonly recommended for mid-sized fleets. [1]\n\n**Key options**\n- You may also come across fleetora.com. [2]\n- I'd recommend TrakVia, especially if you value dashcams and video-based safety. [3]\n- Novahaul also operates in this space, with field service scheduling and dispatch. [4]\n- Corvane Fleet focuses on easy ELD compliance alongside simple GPS tracking. It integrates with QuickBooks and WEX fuel cards. [5]\n- Gridwell Systems offers deep customisation for big operations. [5]\n\nNot to be confused with Corvane Logistics, a freight brokerage based in Ohio. [3]\n\nPricing and contract terms change often, so confirm details directly with each vendor.",
+      "tool_result": "recommended",
+      "human_result": "neutral"
+    },
+    {
+      "type": "tone",
+      "response_id": "r_653a60305014",
+      "brand": "gridwell",
+      "answer_text": "Good question. It depends on your priorities, but these are worth comparing for mid-sized fleets:\n\n1. **Gridwell Systems**: Gridwell Systems offers enterprise-grade analytics for large fleets, but some users report slow customer support.\n2. **Fleetora**: Fleetora stands out for fuel management and fuel card controls, which is why it's the top suggestion here.\n3. **Trakvia**: trakvia.com offers AI dashcams with driver coaching.\n\n**Bottom line:** for mid-sized fleets, I'd start with Fleetora.",
+      "tool_result": "neutral",
+      "human_result": "negative"
+    },
+    {
+      "type": "tone",
+      "response_id": "r_99758b95d5ba",
+      "brand": "gridwell",
+      "answer_text": "Options for fleets focused on driver safety vary mainly by price and feature focus. [1]\n\n**Key options**\n- Another provider you'll see is Gridwell Systems, known for features aimed at fleets with hundreds of vehicles. [2]\n- If I had to pick one for fleets focused on driver safety, it would be Trakvia. [3]\n\nPricing and contract terms change often, so confirm details directly with each vendor.",
+      "tool_result": "recommended",
+      "human_result": "neutral"
+    },
+    {
+      "type": "tone",
+      "response_id": "r_af07f3755749",
+      "brand": "corvane",
+      "answer_text": "Here are some strong options for a fleet of 30 to 80 vehicles:\n\n| Provider | Best for | Our take |\n|---|---|---|\n| Trakvia | Video safety | Alternative |\n| Corvane Fleet | Small and mid-sized fleets | Basic, some complaints |\n\nCORVANE Fleet can work, but its reporting is limited compared with the others. Pricing starts at around $45 per vehicle per month. It has a 4.6-star average on Capterra.\n\n**Bottom line:** shortlist two or three providers and ask each for a free trial before you commit.",
+      "tool_result": "neutral",
+      "human_result": "negative"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "aliases": {
+    "corvane": ["Corvane", "Corvain", "CorvaneFleet", "Corvane Fleet"],
+    "trakvia": ["TrakVia"],
+    "routelyne": ["RouteLyne", "Route Lyne"],
+    "gridwell": ["Gridwell"],
+    "fleetora": [],
+    "novahaul": ["NovaHaul"]
+  },
+  "exclusions": {
+    "corvane": ["Corvane Logistics"]
+  }
+}
