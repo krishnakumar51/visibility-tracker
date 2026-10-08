@@ -53,8 +53,16 @@ export type AnswerFilters = {
 export function tableCompanyEvaluation(
   answer: Answer,
   selectedCompany: string,
+  selectedTone = "all",
 ): CompanyEvaluation | null {
-  if (selectedCompany === "all") return answer.featuredEvaluation;
+  if (selectedCompany === "all") {
+    if (selectedTone === "all") return answer.featuredEvaluation;
+    return (
+      answer.evaluations
+        .filter((evaluation) => evaluation.mentioned === true && evaluation.tone === selectedTone)
+        .sort((a, b) => (a.position ?? Infinity) - (b.position ?? Infinity))[0] ?? null
+    );
+  }
   return (
     answer.evaluations.find(
       (evaluation) => evaluation.company === selectedCompany && evaluation.mentioned === true,

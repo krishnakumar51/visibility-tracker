@@ -121,6 +121,62 @@ describe("real pipeline dashboard adapter", () => {
     expect(filterAnswers(data.answers, filters).map((item) => item.rowId)).toContain(answer!.rowId);
   });
 
+  it("filters tone against at least one evaluation when all companies are selected", () => {
+    const negative = filterAnswers(data.answers, { ...noFilters, tone: "negative" });
+    expect(negative.length).toBeGreaterThan(0);
+    for (const answer of negative) {
+      expect(answer.evaluations.some((evaluation) => evaluation.tone === "negative")).toBe(true);
+      expect(tableCompanyEvaluation(answer, "all", "negative")?.tone).toBe("negative");
+    }
+  });
+
+  it("filters and displays tone for the selected company", () => {
+    for (const tone of ["negative", "recommended"] as const) {
+      const filtered = filterAnswers(data.answers, {
+        ...noFilters,
+        company: "Corvane Fleet",
+        tone,
+      });
+      expect(filtered.length).toBeGreaterThan(0);
+      for (const answer of filtered) {
+        const corvane = answer.evaluations.find((evaluation) => evaluation.company === "Corvane Fleet");
+        expect(corvane?.tone).toBe(tone);
+        expect(tableCompanyEvaluation(answer, "Corvane Fleet", tone)?.tone).toBe(tone);
+      }
+    }
+  });
+
+  it("combines tone with week, engine, and question and clearing filters restores every raw record", () => {
+    const sample = data.answers.find(
+      (answer) =>
+        answer.status === "success" &&
+        answer.evaluations.some(
+          (evaluation) => evaluation.company === "Corvane Fleet" && evaluation.tone === "negative",
+        ),
+    );
+    expect(sample).toBeDefined();
+    const combined = filterAnswers(data.answers, {
+      ...noFilters,
+      week: String(sample!.week),
+      engine: sample!.engine,
+      question: sample!.question,
+      company: "Corvane Fleet",
+      tone: "negative",
+    });
+    expect(combined.length).toBeGreaterThan(0);
+    expect(combined.every((answer) => answer.week === sample!.week)).toBe(true);
+    expect(combined.every((answer) => answer.engine === sample!.engine)).toBe(true);
+    expect(combined.every((answer) => answer.question === sample!.question)).toBe(true);
+    expect(
+      combined.every((answer) =>
+        answer.evaluations.some(
+          (evaluation) => evaluation.company === "Corvane Fleet" && evaluation.tone === "negative",
+        ),
+      ),
+    ).toBe(true);
+    expect(filterAnswers(data.answers, noFilters)).toHaveLength(raw.responses.length);
+  });
+
   it("loads only the dashboard JSON through the static data URL", async () => {
     const fetcher = async (input: RequestInfo | URL) => {
       expect(input).toBe("/dashboard_data.json");

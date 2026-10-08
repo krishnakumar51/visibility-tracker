@@ -11,6 +11,7 @@ import {
   Search,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { AnswerMarkdown } from "@/components/answer-markdown";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -109,8 +110,15 @@ function AnswerExplorerPage() {
 
   const activeFilterCount = Object.values(filters).filter((value) => value !== "all").length;
   const failedCount = dashboardData.answers.filter((answer) => answer.status !== "success").length;
-  const setFilter = (key: keyof AnswerFilters, value: string) =>
+  const setFilter = (key: keyof AnswerFilters, value: string) => {
     setFilters((current) => ({ ...current, [key]: value }));
+    setSelected(null);
+  };
+  const clearFilters = () => {
+    setFilters(EMPTY_FILTERS);
+    setSearchText("");
+    setSelected(null);
+  };
 
   return (
     <div className="space-y-5 pb-8 sm:space-y-6">
@@ -153,10 +161,7 @@ function AnswerExplorerPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => {
-                setFilters(EMPTY_FILTERS);
-                setSearchText("");
-              }}
+              onClick={clearFilters}
               className="h-7 px-2 text-[10px] text-muted-foreground"
             >
               <RotateCcw aria-hidden="true" className="size-3" /> Clear all
@@ -232,14 +237,22 @@ function AnswerExplorerPage() {
               <span role="columnheader">Week · engine</span>
               <span role="columnheader">Question</span>
               <span role="columnheader">
-                {filters.company === "all" ? "First company" : "Selected company / first mention"}
+                {filters.company !== "all"
+                  ? "Selected company / first mention"
+                  : filters.tone !== "all"
+                    ? "Matching company / first mention"
+                    : "First company"}
               </span>
               <span role="columnheader">Position</span>
               <span role="columnheader">Tone / status</span>
             </div>
             {visibleAnswers.map((answer) => {
               const featured = answer.featuredEvaluation;
-              const displayedEvaluation = tableCompanyEvaluation(answer, filters.company);
+              const displayedEvaluation = tableCompanyEvaluation(
+                answer,
+                filters.company,
+                filters.tone,
+              );
               return (
                 <button
                   type="button"
@@ -279,6 +292,7 @@ function AnswerExplorerPage() {
                     {filters.company !== "all" &&
                       featured &&
                       displayedEvaluation &&
+                      (filters.company !== "all" || filters.tone !== "all") &&
                       featured.brand !== displayedEvaluation.brand && (
                         <span className="ml-1 block truncate font-normal text-muted-foreground">
                           First: {featured.company} ({featured.position})
@@ -320,10 +334,7 @@ function AnswerExplorerPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => {
-                      setFilters(EMPTY_FILTERS);
-                      setSearchText("");
-                    }}
+                    onClick={clearFilters}
                     className="mt-3"
                   >
                     Clear filters
@@ -422,9 +433,9 @@ function AnswerDetails({ answer }: { answer: Answer }) {
             <MessageSquareText aria-hidden="true" className="size-4 text-primary" />
             <h3 className="text-xs font-semibold text-foreground">Original AI answer</h3>
           </div>
-          <blockquote className="mt-3 whitespace-pre-wrap rounded-lg border border-border bg-card p-4 text-[13px] leading-[1.8] text-foreground">
-            {answer.response || "No answer text was returned."}
-          </blockquote>
+          <div className="mt-3 rounded-lg border border-border bg-card p-4 text-foreground">
+            <AnswerMarkdown text={answer.response || "No answer text was returned."} />
+          </div>
           {answer.citations.length > 0 && (
             <div className="mt-3 space-y-1 text-[10px] text-muted-foreground">
               <p className="font-semibold">Sources</p>
