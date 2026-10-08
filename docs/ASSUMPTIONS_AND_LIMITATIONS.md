@@ -2,11 +2,14 @@
 
 - The source pack is a finite panel of 15 prompts, three engines, and normally two runs per
   prompt/engine/week. It is small and does not represent every buyer, query, or answer variation.
-- The original base contains 518 source records and 510 unique response IDs. Week 2 has eight
-  duplicated ChatGPT rows/slots with identical content. They remain visible in source-line exports;
-  coverage counts the slot once and scoring averages duplicate observations within a run.
-- Week 5 is incomplete because all 30 Perplexity slots are absent. A week is called complete at
-  95% or greater valid-slot coverage with at least one valid slot from each expected engine.
+- The original source has 518 raw JSONL lines (515 successful, three failed) and 510 unique response
+  IDs. Week 2 has eight exact duplicate ChatGPT lines. The quality report detects them; they remain
+  visible in exports, but duplicate observations are averaged within a run and do not add score
+  weight.
+- Week 4 has 88/90 valid slots (97.8%) because two Perplexity responses failed. Week 5 has 60/90
+  valid slots (66.7%), with all 30 missing slots from Perplexity. Week 6 has 90/90 valid slots
+  (100%). A week is complete at 95% or greater valid-slot coverage with at least one valid slot
+  from every expected engine.
 - The base contains three timeouts. Failed/unusable responses are preserved with status and excluded
   from scoring and fact checks. `mentions.csv` cannot encode unavailable, so those rows use its
   required false/blank placeholder; inspect JSON status before treating one as an observed absence.
@@ -24,7 +27,7 @@
   aliases are normalized, but a major new engine schema may require a normalization change and
   parser test. The upload API accepts a single week per file and rejects malformed/unknown-prompt
   records.
-- The 518-response base is not overwritten by uploads. Each upload is additive and independently
+- The 518-raw-record base is not overwritten by uploads. Each upload is additive and independently
   deactivatable. Deactivation removes it from recalculated dashboard data but retains the uploaded
   JSONL and generated run files for audit.
 - The analysis has no paid AI API or local-model dependency. Collection of responses, scheduled

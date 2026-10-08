@@ -12,7 +12,7 @@ against the original brief in `extras/AI_Native_Developer_Case_Study_Corvane_Fle
 | Wrong-fact alerts for supported Corvane claims | PASS | `backend/src/corvane_pipeline/facts.py`; `outputs/wrong_facts.csv` |
 | Single visibility score for four tracked companies | PASS | `backend/src/corvane_pipeline/scoring.py`; settings in `backend/config/scoring.json`; `outputs/analytics.json` |
 | Week-on-week comparison and observed run variation | PASS | `scoring.py` outputs score-point deltas, variation threshold, and drivers; `docs/SCORING_DESIGN.md` |
-| Incomplete-week handling | PASS | 95% threshold and expected engines in scoring config; Week 5 partial handling and tests |
+| Incomplete-week handling | PASS | Week 4 88/90 (97.8%; two failed Perplexity rows), Week 5 60/90 (66.7%; all 30 missing slots are Perplexity), Week 6 90/90 (100%); incomplete Week 5 suppresses normal Week 6 WoW, with Week 4 separately labeled as last complete-week change. |
 | Marcus Monday overview | PASS | `frontend/src/routes/index.tsx`; scores, coverage, movement, alerts, and evidence-linked actions |
 | 15-answer human accuracy check | PASS | `outputs/manual_review.csv`, `outputs/manual_review_comparison.json`, and README results; 90 rows, 4 tone disagreements |
 | One-command local use | PARTIAL | `python backend/scripts/run_pipeline.py` runs the pipeline; the complete web app requires separate FastAPI and Vite processes (no combined launcher) |

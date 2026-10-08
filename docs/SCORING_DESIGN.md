@@ -6,7 +6,7 @@ The brief asks for one score for Corvane and the three tracked competitors, unde
 
 ## What the data supports
 
-Each successful answer has a week, engine, prompt, run, answer text, and citations/sources. The prompt table gives stage and priority. Mention, order, and tone can be inferred from answer text. There are nominally two runs for each of 15 prompts × 3 engines × 6 weeks, but only 518/540 rows exist; week 5 lacks Perplexity and week 2 has eight extra ChatGPT rows. Error rows and repeated composite keys need explicit treatment. The pack does not provide impressions, traffic, sales, citation quality, or a gold-standard score.
+Each successful answer has a week, engine, prompt, run, answer text, and citations/sources. The prompt table gives stage and priority. Mention, order, and tone can be inferred from answer text. There are nominally two runs for each of 15 prompts × 3 engines × 6 weeks, but the source has 518 raw JSONL lines (515 successful and 3 failed) out of 540 expected slots. Week 2 has eight exact duplicate lines; Week 4 has 88/90 valid slots due to two failed Perplexity responses; Week 5 has 60/90 valid slots (66.7%) because all 30 Perplexity slots are missing; Week 6 has 90/90 (100%). The pack does not provide impressions, traffic, sales, citation quality, or a gold-standard score.
 
 ## Implemented score (0–100)
 
@@ -27,7 +27,7 @@ Prompt priority is implemented as a 1–3 weight. A high-priority buyer question
 1. Score each successful run independently.
 2. For each prompt-engine stratum, average its valid run values. Then calculate a priority-weighted mean across the fixed set of prompt-engine strata, giving each engine equal presence in the panel. This avoids a duplicated slot in one engine or many answers in a week dominating the index.
 3. Do not turn timeouts/blank failed responses into zero. Exclude the failed observation and show coverage. A stratum with one valid run contributes its available estimate; the overall week coverage and completeness status show reduced data coverage.
-4. A week is complete with at least 95% valid-slot coverage and at least one valid slot from every expected engine. Otherwise show its available score as **partial** and suppress the headline week-over-week change. Week 5 is partial because Perplexity is absent. The application provides a labeled gap comparison to the last complete week; this is not labeled week-over-week.
+4. A week is complete with at least 95% valid-slot coverage and at least one valid slot from every expected engine. Otherwise show its available score as **partial** and suppress the headline week-over-week change. Week 5 is partial because Perplexity is absent. Week 6 does not show a normal WoW comparison against incomplete Week 5. It provides a separate comparison to Week 4, labeled as change since the last complete week, not week-over-week.
 5. Keep competitor scores calculated by exactly the same method. The four score series therefore have a common scale.
 
 ## Variation and meaningful change

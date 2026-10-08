@@ -129,7 +129,7 @@ function AnswerExplorerPage() {
         <div className="inline-flex items-center gap-2.5 rounded-xl border border-border bg-card px-3.5 py-2.5 text-xs shadow-sm">
           <Database aria-hidden="true" className="size-4 shrink-0 text-primary" />
           <span className="font-semibold text-foreground">
-            {dashboardData.answers.length} responses
+            {dashboardData.answers.length} raw records
           </span>
           <span className="h-4 w-px bg-border" />
           <span className="text-muted-foreground">{failedCount} failed or unavailable</span>

@@ -21,8 +21,8 @@ Explorer.
 The live application is available at [visibility-tracker-beta.vercel.app](https://visibility-tracker-beta.vercel.app/).
 Its API health endpoint is [visibility-tracker-production-cd2c.up.railway.app/health](https://visibility-tracker-production-cd2c.up.railway.app/health).
 
-The original `extras/corvane_data_pack/responses.jsonl` contains 518 records (515 successful and
-three failed) and is not overwritten by the upload workflow. Each upload is additive and receives
+The original `extras/corvane_data_pack/responses.jsonl` contains 518 raw JSONL lines (515 successful
+and 3 failed) and is not overwritten by the upload workflow. Each upload is additive and receives
 a unique run folder. The uploaded
 responses and generated snapshots remain stored even after a run is deactivated.
 
@@ -106,11 +106,12 @@ six-week source pack; the original source pack remains unchanged.
 ## Data and ingestion
 
 The base pack describes six weeks, 15 prompts, three engines, and two runs per prompt/engine/week:
-540 nominal slots. It contains 518 source records, 510 unique response IDs, 515 successful
-responses, and three timeouts. Week 5 has 60/90 valid slots because all 30 Perplexity slots are
-missing. Week 2 contains 98 rows: eight duplicate ChatGPT response IDs/slots, each with identical
-content. Those source lines remain represented in evaluation and exports; expected coverage slots
-are counted once and repeated records within a run are averaged for scoring.
+540 nominal slots. Its 518 raw JSONL lines have 510 unique response IDs: 515 lines are successful
+and three are failed. Week 2 contains 98 lines, including eight exact duplicate lines. The quality
+report detects the duplicates; they remain represented in evaluation and exports, but the slot is
+counted once and duplicate observations are averaged within a run, so they add no scoring weight.
+Week 4 has 88/90 valid slots (97.8%) because two Perplexity responses failed. Week 5 has 60/90
+valid slots (66.7%); all 30 missing slots are Perplexity. Week 6 has 90/90 valid slots (100%).
 
 Failed or unusable responses remain visible with their status in JSON, but are not scored or
 fact-checked. They are not treated as zero visibility. The required `mentions.csv` format has no
@@ -129,8 +130,9 @@ change and parser test; a major schema change is not solved by the score layer.
 Incomplete weeks still have a partial score from observed valid slots, but are visibly marked
 partial. A week needs at least 95% coverage and at least one valid slot from every expected engine
 to be complete. Failed slots reduce coverage, not score. The dashboard suppresses a headline
-week-over-week change after an incomplete prior week and labels a comparison to the last complete
-week separately.
+week-over-week change after an incomplete prior week. Week 6 therefore has no normal WoW comparison
+against incomplete Week 5; its Week 4 comparison is labeled as change since the last complete week,
+not week-over-week.
 
 ## Scoring
 
