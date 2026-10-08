@@ -18,8 +18,12 @@ Explorer.
   recomputes all dashboard calculations from the original base plus active uploads; deleted-run
   files remain available on disk for audit.
 
-The original `extras/corvane_data_pack/responses.jsonl` contains 518 records and is not overwritten
-by the upload workflow. Each upload is additive and receives a unique run folder. The uploaded
+The live application is available at [visibility-tracker-beta.vercel.app](https://visibility-tracker-beta.vercel.app/).
+Its API health endpoint is [visibility-tracker-production-cd2c.up.railway.app/health](https://visibility-tracker-production-cd2c.up.railway.app/health).
+
+The original `extras/corvane_data_pack/responses.jsonl` contains 518 records (515 successful and
+three failed) and is not overwritten by the upload workflow. Each upload is additive and receives
+a unique run folder. The uploaded
 responses and generated snapshots remain stored even after a run is deactivated.
 
 ## Architecture
@@ -84,6 +88,20 @@ python backend/scripts/run_pipeline.py --responses extras/corvane_data_pack/resp
 
 The CLI combines that file with the base responses for that run. Alternatively, submit one week's
 JSONL from **Upload & Analyze**; uploaded files are additive runs and do not modify the base file.
+
+## Quick Demo Upload
+
+The repository includes [`demo-data/responses_week_7_demo.jsonl`](demo-data/responses_week_7_demo.jsonl),
+a small Week 7 demo/test file for trying the upload workflow. It is separate from the original
+six-week source pack; the original source pack remains unchanged.
+
+1. Open the [live dashboard](https://visibility-tracker-beta.vercel.app/).
+2. Open **Upload & Analyze**.
+3. Select `demo-data/responses_week_7_demo.jsonl` from the repository.
+4. Click **Run Analysis**.
+5. Review the dashboard, Answer Explorer, and Upload History.
+6. Delete the run to remove it from active dashboard data. Its record and files remain in Upload
+   History for review.
 
 ## Data and ingestion
 
@@ -170,9 +188,9 @@ complexity.
 
 The current one-client app is specifically configured for Corvane Fleet. Full per-question
 head-to-head replacement analysis, competitor fact alerts, source-level citation analysis, board
-report export, multi-client operations, a single-command web launcher, and a deployed public URL
-are not delivered. See [`docs/CASE_STUDY_REQUIREMENTS.md`](docs/CASE_STUDY_REQUIREMENTS.md) for the
-requirement-by-requirement status.
+report export, multi-client operations, and a single-command web launcher are not delivered. The
+browser app and API are deployed; see [`docs/CASE_STUDY_REQUIREMENTS.md`](docs/CASE_STUDY_REQUIREMENTS.md)
+for the requirement-by-requirement status.
 
 ## AI-assisted development
 
@@ -226,13 +244,11 @@ The upload page downloads these three outputs. Other pipeline artifacts include 
 Every successful upload gets a unique ID and a folder containing its input plus dashboard and CSV
 snapshots. Deleting a run changes its registry state and recomputes the active dataset; it does not
 remove the run folder. Locally the registry and latest outputs are under project-root `outputs/`.
-On Render they are under `/var/data/outputs/` when a persistent disk is mounted at `/var/data`.
-The registry file is `outputs/upload_registry.sqlite3` locally and
-`/var/data/outputs/upload_registry.sqlite3` on Render. A run's local files are in
-`outputs/uploads/<upload_id>/`; on Render they are in
-`/var/data/outputs/uploads/<upload_id>/`. Configure `CORVANE_OUTPUT_DIR` for the backend and
-`VITE_API_URL` at frontend build time. Vercel and Render settings are documented in
-[`DEPLOYMENT.md`](DEPLOYMENT.md); the app has not been deployed as part of this case study.
+The deployed Railway service is configured with
+`CORVANE_OUTPUT_DIR=/var/data/outputs`; the registry and run folders use that configured directory.
+The repository documentation does not establish whether Railway has a persistent volume mounted
+there, so persistence across redeploys should not be assumed. Configure `VITE_API_URL` at frontend
+build time. The Vercel and Railway settings are documented in [`DEPLOYMENT.md`](DEPLOYMENT.md).
 There is no automatic artifact expiration: define an operational retention policy separately if
 storage needs to be reclaimed, because the application's Delete action intentionally preserves
 run files.
@@ -261,6 +277,6 @@ docs/          scoring, data, assumptions, Marcus note, and case-study status
 extras/        original brief and immutable Corvane data pack
 frontend/      React/Vite dashboard, Answer Explorer, upload, and run history
 outputs/       local generated exchange files, upload snapshots, and SQLite registry
-Dockerfile     Render backend image
-DEPLOYMENT.md  local, Vercel, and Render setup
+Dockerfile     backend container image
+DEPLOYMENT.md  local, Vercel, and Railway setup
 ```

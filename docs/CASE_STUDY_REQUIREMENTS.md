@@ -1,6 +1,6 @@
 # Case-study requirements status
 
-Statuses reflect the current repository, not a deployment claim. Core requirements are checked
+Statuses reflect the current repository and deployed application. Core requirements are checked
 against the original brief in `extras/AI_Native_Developer_Case_Study_Corvane_Fleet.md`.
 
 | Requirement | Status | Evidence / Location |
@@ -27,4 +27,4 @@ against the original brief in `extras/AI_Native_Developer_Case_Study_Corvane_Fle
 | Source reporting: websites cited and competitor-only sources | PARTIAL | Citation URLs are available in answer detail; source-level aggregation and competitor-only source analysis are not implemented. |
 | Configuration-only competitor addition and market-side switching | PARTIAL | Detection/scoring use configured brand data, but fact checking and several dashboard actions are Corvane-specific; switching the client perspective is not implemented. |
 | Board report export | Not implemented | Not implemented — intentionally not prioritised. Available downloads are `mentions.csv`, `wrong_facts.csv`, and `dashboard_data.json`. |
-| Deployed browser version | Not implemented | Not implemented — intentionally not prioritised. Vercel/Render configuration is documented, but no public deployment is claimed. |
+| Deployed browser version | COMPLETE | [Vercel dashboard](https://visibility-tracker-beta.vercel.app/) with API at [Railway health endpoint](https://visibility-tracker-production-cd2c.up.railway.app/health); configuration in `DEPLOYMENT.md`. |

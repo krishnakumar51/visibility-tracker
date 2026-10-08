@@ -1,6 +1,6 @@
 ﻿# Implementation plan
 
-**Status:** this is the original implementation plan and its checklists are historical acceptance references. The Python pipeline, CLI, tests, React dashboard, FastAPI upload/history layer, and deployment configuration are now implemented. The full web app still requires separate backend and frontend processes locally; the public deployment stretch item has not been completed. Current requirement status is in `CASE_STUDY_REQUIREMENTS.md`.
+**Status:** this is the original implementation plan and its checklists are historical acceptance references. The Python pipeline, CLI, tests, React dashboard, FastAPI upload/history layer, and deployment configuration are now implemented. The application is deployed on Vercel with its API on Railway. Locally, the web app still requires separate backend and frontend processes. Current requirement status is in `CASE_STUDY_REQUIREMENTS.md`.
 
 ## MUST HAVE
 
@@ -92,7 +92,7 @@
 4. Sources and sites citing competitors but not Corvane.
 5. Board report export.
 6. Configuration-driven market side and adding competitors.
-7. Deployment.
+7. Deployment (completed; current setup is documented in `DEPLOYMENT.md`).
 
 ## OPTIONAL POLISH
 

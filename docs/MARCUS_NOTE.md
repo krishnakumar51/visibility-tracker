@@ -5,6 +5,12 @@ across the selected buyer questions. It compares Corvane with Trakvia, Routelyne
 shows which questions and answers explain movement, and flags claims that conflict with the
 approved facts file.
 
+At the current live baseline, Week 6 is complete at 90/90 coverage. Its visibility scores are
+Corvane Fleet 37.44, Trakvia 44.04, Routelyne 30.22, and Gridwell Systems 20.60. Week 5 is
+incomplete, so the dashboard does not present a Week 6 versus Week 5 headline change; it labels
+Week 4 as the last comparable week. The baseline export contains 47 Corvane wrong-fact alerts,
+which should be reviewed against the approved facts before taking action.
+
 The main number is a 0–100 visibility score for the observed answer panel. It gives credit when a
 company is mentioned, more credit when it appears earlier, and adjusts for whether the answer
 recommends or criticizes it. Prompt importance also affects the average. Every tracked competitor

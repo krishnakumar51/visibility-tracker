@@ -63,7 +63,7 @@ The brief does not require a specific framework, language, database, cloud platf
 
 - The implemented score weights and movement threshold are documented in `SCORING_DESIGN.md` and `backend/config/scoring.json`; they are product choices, not statistically established values.
 - Known source format variations are normalized and tested. Future engine formats still require a parser update/test when they exceed known aliases.
-- Optional work not delivered includes complete head-to-head replacement analysis, competitor fact alerts, aggregate source reporting, a board report, multi-client support, and public deployment. See `CASE_STUDY_REQUIREMENTS.md`.
+- Optional work not delivered includes complete head-to-head replacement analysis, competitor fact alerts, aggregate source reporting, a board report, and multi-client support. The browser app is deployed on Vercel with its API on Railway; see `CASE_STUDY_REQUIREMENTS.md` and `DEPLOYMENT.md`.
 
 ## Implementation decision: failed-row CSV representation
 

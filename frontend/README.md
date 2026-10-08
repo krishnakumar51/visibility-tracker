@@ -33,3 +33,14 @@ npm run preview
 FastAPI. Set `VITE_API_URL` to the backend origin for deployed builds. The Vite
 adapter serves the root pipeline JSON during local development and copies only
 that file into the static build; production fetches active data from FastAPI.
+
+The deployed dashboard is <https://visibility-tracker-beta.vercel.app/>. Production API and
+environment setup are documented in the repository-root [`DEPLOYMENT.md`](../DEPLOYMENT.md).
+
+## Quick Demo Upload
+
+Use the repository's [`demo-data/responses_week_7_demo.jsonl`](../demo-data/responses_week_7_demo.jsonl)
+to try **Upload & Analyze** on the [live dashboard](https://visibility-tracker-beta.vercel.app/).
+Select the file, run the analysis, and review Overview, Answer Explorer, and Upload History. You can
+delete the run from active dashboard data; its record and files remain in Upload History. This is
+demo/test data, not part of the original six-week source pack, which remains unchanged.
