@@ -1,0 +1,16 @@
+prompt_id,question,stage,priority
+P01,What is the best fleet tracking software for a small trucking company?,comparing_options,3
+P02,What is the cheapest GPS fleet tracking software?,comparing_options,2
+P03,How do I choose ELD compliance software?,early_research,2
+P04,Best fleet management software for field service businesses,comparing_options,3
+P05,Corvane Fleet reviews,specific_company,3
+P06,Corvane vs Trakvia: which is better?,specific_company,3
+P07,Is Routelyne good for small fleets?,specific_company,2
+P08,Fleet tracking software with dashcams,comparing_options,2
+P09,How much does fleet GPS tracking cost per vehicle?,early_research,2
+P10,Best fleet software for a company with 50 trucks,comparing_options,3
+P11,Alternatives to Gridwell for mid-sized fleets,specific_company,2
+P12,How can I reduce fuel costs in my fleet?,early_research,1
+P13,Best ELD providers in 2026,comparing_options,3
+P14,Fleet tracking software that integrates with QuickBooks,comparing_options,2
+P15,Do I need GPS tracking for a 20-truck fleet?,early_research,1

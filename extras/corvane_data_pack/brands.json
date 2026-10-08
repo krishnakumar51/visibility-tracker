@@ -1,0 +1,30 @@
+{
+  "client": {
+    "name": "Corvane Fleet",
+    "website": "corvanefleet.com"
+  },
+  "tracked_competitors": [
+    {
+      "name": "Trakvia",
+      "website": "trakvia.com"
+    },
+    {
+      "name": "Routelyne",
+      "website": "routelyne.com"
+    },
+    {
+      "name": "Gridwell Systems",
+      "website": "gridwell.io"
+    }
+  ],
+  "other_companies": [
+    {
+      "name": "Fleetora",
+      "website": "fleetora.com"
+    },
+    {
+      "name": "Novahaul",
+      "website": "novahaul.com"
+    }
+  ]
+}

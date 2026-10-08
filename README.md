@@ -1,68 +1,266 @@
-# Corvane Fleet visibility pipeline
+# Corvane Fleet AI Visibility Tracker
 
-Local, standard-library Python pipeline for normalizing the supplied AI answer pack, detecting company mentions and tone, checking explicit Corvane fact contradictions, calculating weekly visibility scores, and exporting CSV/JSON results. It does not call external services or modify the source pack.
+This project analyzes AI answers to buyer questions about fleet software. It helps Corvane Fleet
+see how often it appears, how it is described, which supported facts are contradicted, and how its
+observed visibility compares with three tracked competitors. The product is built around two
+workflows: Marcus's concise Monday overview and Priya's answer-level investigation in Answer
+Explorer.
 
-## Run locally
+## Key workflows
 
-From the repository root (Python 3.11 or newer):
+- **Overview:** current weekly score, coverage, comparable movement, evidence-linked drivers,
+  wrong-fact alerts, and deterministic suggested actions.
+- **Answer Explorer:** filter by week, engine, question, company, and tone; search original answers;
+  inspect failed records, all six company evaluations, mention spans, and citations.
+- **Upload & Analyze:** submit one new week's JSONL through the app. The API validates it and runs
+  the existing Python CLI.
+- **Upload History:** review each run and logically delete it from the active dataset. The backend
+  recomputes all dashboard calculations from the original base plus active uploads; deleted-run
+  files remain available on disk for audit.
+
+The original `extras/corvane_data_pack/responses.jsonl` contains 518 records and is not overwritten
+by the upload workflow. Each upload is additive and receives a unique run folder. The uploaded
+responses and generated snapshots remain stored even after a run is deactivated.
+
+## Architecture
+
+```text
+JSONL + prompts.csv + brands.json + facts.json
+  -> normalization and validation
+  -> mention detection and Corvane Logistics exclusion
+  -> first-mention position and tone
+  -> supported Corvane fact checks
+  -> coverage-aware weekly scores and comparisons
+  -> CSV/JSON exports
+  -> FastAPI upload/history layer
+  -> React dashboard and Answer Explorer
+```
+
+The Python pipeline is the source of truth. `backend/scripts/run_pipeline.py` remains the CLI
+entry point. FastAPI invokes that CLI for uploads rather than duplicating analysis logic. A SQLite
+registry under the configured output directory records run metadata and active/deleted state. The
+active dataset is always the 518-record base plus active uploads; deleting an upload is a logical
+deactivation, not file removal.
+
+## Quick start
+
+Use three terminals from the repository root. These PowerShell commands also work on the current
+Windows setup.
+
+**Terminal 1 — install dependencies and generate baseline outputs:**
 
 ```powershell
 python -m venv .venv
-.venv\\Scripts\\Activate.ps1
-python -m pip install -r requirements.txt
-python scripts/run_pipeline.py
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r backend/requirements.txt
+python backend/scripts/run_pipeline.py
 ```
 
-To process a new response file while reusing the prompt, brand, and fact configuration:
+**Terminal 1, after processing — start FastAPI:**
 
 ```powershell
-python scripts/run_pipeline.py --input extras/corvane_data_pack --responses path\\to\\new_responses.jsonl --output outputs
+python -m uvicorn app:app --app-dir backend --host 127.0.0.1 --port 8000
 ```
 
-The input directory must contain `prompts.csv`, `brands.json`, and `facts.json`. `--seed` controls the reproducible 15-answer review sample. Run automated tests with `python -m unittest discover -s tests -v`.
-
-## Outputs
-
-- `outputs/mentions.csv`: six company rows for every source-line response, including failed responses.
-- `outputs/wrong_facts.csv`: supported Corvane contradictions with response IDs and claim excerpts.
-- `outputs/quality_report.json`: status, coverage, schema, duplicate-slot, and reproducible review sample details.
-- `outputs/evaluation.json`: normalized response details, mention evidence, status, and fact alerts.
-- `outputs/analytics.json`: scores, completeness, run variation, week comparisons, and score drivers.
-- `outputs/dashboard_data.json`: combined machine-readable data for a future frontend.
-- `outputs/manual_review.csv`: the 15 selected answers expanded into one row per brand, with original answer text, separate tool predictions, and human annotation columns. Existing human annotations are preserved by subsequent pipeline runs.
-- `outputs/manual_review_comparison.json`: comparison counts, accuracies, denominators, and full disagreement details.
-
-## Human accuracy review
-
-Open `outputs/manual_review.csv` in a spreadsheet. For each answer and each brand, independently read the original `answer_text`, then fill `human_mentioned` with `true` or `false`. For mentioned brands, record `human_position` as the order of first appearance and `human_tone` as `recommended`, `neutral`, `negative`, or `not_recommended`. Leave position and tone blank when the brand is absent. Add disagreement context in `review_notes` if useful. The `tool_*` fields are the pipeline's predictions; do not edit them. The pipeline preserves the worksheet whenever any human annotations or notes are present.
-
-After saving the annotations, run this from the repository root:
+**Terminal 2 — start the frontend:**
 
 ```powershell
-python scripts/compare_manual_review.py
+cd frontend
+npm.cmd ci
+npm.cmd run dev
 ```
 
-The comparison reports mention and tone accuracy using their human-labeled denominators, plus disagreement details. Position accuracy is included as a diagnostic only. Blank or unreviewed fields are excluded. With no human labels, the command reports an incomplete review and no accuracy percentages.
+Open <http://localhost:5173>. Vite proxies API requests to FastAPI at port 8000. Local pipeline
+processing itself is one command (`python backend/scripts/run_pipeline.py`); launching the complete
+web app currently requires separate backend and frontend processes. There is no one-command web
+launcher.
 
-### Completed 15-answer review
+To load a future week's file through the CLI without changing Python code, place it beside the
+shared data pack and run, for example:
 
-The completed sample contains 15 unique answers and 90 answer-brand rows. Human labels mark 37 brand mentions and 53 non-mentions. Tool mention detection agrees on **90/90 rows (100%)**. For the 37 human-mentioned brands, tool position agrees on **37/37 (100%, diagnostic)**. Tool tone agrees on **33/37 (89.19%)**. These are sample results, not population-wide guarantees. Automated test results are separate and do not contribute to these denominators.
+```powershell
+python backend/scripts/run_pipeline.py --responses extras/corvane_data_pack/responses_week_7.jsonl
+```
 
-The four tone disagreements (tool -> human) are:
+The CLI combines that file with the base responses for that run. Alternatively, submit one week's
+JSONL from **Upload & Analyze**; uploaded files are additive runs and do not modify the base file.
 
-- `r_0b1a37fccc56` / Fleetora: recommended -> neutral.
-- `r_653a60305014` / Gridwell Systems: neutral -> negative.
-- `r_99758b95d5ba` / Gridwell Systems: recommended -> neutral.
-- `r_af07f3755749` / Corvane Fleet: neutral -> negative.
+## Data and ingestion
 
-## Current pack and interpretation
+The base pack describes six weeks, 15 prompts, three engines, and two runs per prompt/engine/week:
+540 nominal slots. It contains 518 source records, 510 unique response IDs, 515 successful
+responses, and three timeouts. Week 5 has 60/90 valid slots because all 30 Perplexity slots are
+missing. Week 2 contains 98 rows: eight duplicate ChatGPT response IDs/slots, each with identical
+content. Those source lines remain represented in evaluation and exports; expected coverage slots
+are counted once and repeated records within a run are averaged for scoring.
 
-The supplied file contains 518 records, 510 unique response IDs, 515 successful responses, and 3 timeouts. Eight week-2 ChatGPT run slots occur twice with identical IDs and content. They remain visible as source-line records; duplicate slots do not add score weight. Consequently, the mentions export has 3,108 rows, while `wrong_facts.csv` deduplicates identical claims by response ID, brand, fact key, and claim text.
+Failed or unusable responses remain visible with their status in JSON, but are not scored or
+fact-checked. They are not treated as zero visibility. The required `mentions.csv` format has no
+unavailable value, so its failed/unusable rows use `false` with blank position and tone as a schema
+placeholder; check JSON response status before interpreting those rows.
 
-Week 5 is partial: all 30 Perplexity slots are absent. Week 6 is complete. Its headline week-over-week change is suppressed because the immediately preceding week is incomplete; a separate gap comparison against week 4 is labeled as such. Timeout rows are excluded from scoring and fact checks. The mandated mentions CSV has no unavailable value, so these rows use false with blank position and tone; check response status in JSON before interpreting them as observed non-mentions.
+The loader canonicalizes known input variations, including `response_text`/`answer`,
+`citations`/`sources`, `run`/`run_number`, `collected_at`/`collected`,
+`prompt_id`/`question_id`, prompt-ID case, and engine labels such as `ChatGPT` and `AI Overview`.
+The explicit `week` field controls grouping; ambiguous localized timestamps are preserved rather
+than guessed. Blank JSONL lines are skipped. The upload
+endpoint rejects malformed JSON, unknown prompts, invalid required fields, and files containing
+more than one week with a useful validation error. New observed formats should get a normalization
+change and parser test; a major schema change is not solved by the score layer.
 
-The current corpus run emits 47 distinct Corvane contradiction rows. The rules cover supported fields and explicit language, not every possible paraphrase; unsupported claims are unverified rather than wrong. Tone and fact extraction are rule-based. The score is a configurable index of this finite prompt and engine sample, not market share.
+Incomplete weeks still have a partial score from observed valid slots, but are visibly marked
+partial. A week needs at least 95% coverage and at least one valid slot from every expected engine
+to be complete. Failed slots reduce coverage, not score. The dashboard suppresses a headline
+week-over-week change after an incomplete prior week and labels a comparison to the last complete
+week separately.
 
-## Audit and AI-assisted development
+## Scoring
 
-The pipeline has been audited against the supplied corpus, automated fixtures, and the completed 15-answer human review. Corpus audit fixes included the `Corvain` spelling, indirect recommendation and negative-tone phrasing, price/HQ/integration contradiction patterns, and a fact-attribution false positive involving Corvane Logistics. The human review found no mention or position disagreements and four tone disagreements; those results are listed above. See `docs/` for input details, scoring choices, and limitations.
+The 0–100 visibility index rewards a company for appearing, appearing earlier, and receiving a
+positive recommendation. A non-mention earns zero. Mention tone values are `recommended` 1.00,
+`neutral` 0.65, `negative` 0.40, and `not_recommended` 0.25. Position multipliers are 1.00 for
+first, 0.80 for second, 0.60 for third, and 0.40 for fourth or later. Each prompt's configured
+priority (1–3) weights its prompt/engine stratum. Valid values are averaged within a run, available
+runs are averaged equally, and the priority-weighted mean across prompt/engine strata is scaled to
+100. Engines receive equal treatment; competitors use the same score method.
+
+Movement is shown in score points. The comparison threshold is the larger of a configurable
+2-point floor and the mean observed run variation across up to four prior complete weeks. This is a
+practical signal for this panel, not a statistical significance test. An incomplete week cannot
+create a false headline drop. See [`docs/SCORING_DESIGN.md`](docs/SCORING_DESIGN.md) and
+[`backend/config/scoring.json`](backend/config/scoring.json) for details. This is a product metric
+for the selected questions and engines, not market share, total buyer exposure, or a guarantee of
+business outcomes.
+
+## Accuracy check
+
+The manual review covers 15 randomly selected unique successful answers (seed 42), expanded into
+90 response-by-brand evaluations. Human annotations are compared with tool predictions; tool
+values are not substituted for human labels.
+
+- **Mentions:** 90/90 correct (100%); no disagreements.
+- **Position:** 37/37 correct among human-reviewed mentions (100%, diagnostic); no disagreements.
+- **Tone:** 33/37 correct (89.19%). The four disagreements are:
+  - `r_0b1a37fccc56` / Fleetora: tool recommended, human neutral.
+  - `r_653a60305014` / Gridwell: tool neutral, human negative.
+  - `r_99758b95d5ba` / Gridwell: tool recommended, human neutral.
+  - `r_af07f3755749` / Corvane Fleet: tool neutral, human negative.
+
+The deterministic tone rules can misread context: nearby generic recommendations can be attributed
+to a named company, or a limiting/critical clause can be missed when deciding the answer's final
+verdict. In the four observed cases, two neutral descriptions were labeled recommended; two
+human-negative cases (one mentioning slow customer support, one describing limited reporting and
+complaints) were labeled neutral. This small sample is a validation check, not proof of perfect
+accuracy or performance on future data. The machine-readable results and answer evidence are in
+[`outputs/manual_review_comparison.json`](outputs/manual_review_comparison.json) and
+[`outputs/manual_review.csv`](outputs/manual_review.csv).
+
+## Priorities and trade-offs
+
+**Priority 1** was reliable mention detection; distinguishing Corvane Fleet from Corvane Logistics;
+position, tone, and supported fact alerts; an explainable score; incomplete-week handling; Marcus's
+overview; Priya's answer explorer; the required exports; automated tests; and future-week ingestion.
+These make the underlying evidence and its limits reviewable before adding broader automation.
+
+**Priority 2** was the upload workflow, persistent upload history, active/deleted run management,
+and deployment configuration. The scoring approach is deterministic and rules-based: it needs no
+paid inference API, runs on an ordinary laptop, is reproducible, and can be inspected and tested.
+The review's four tone disagreements are disclosed rather than hidden behind unnecessary model
+complexity.
+
+The current one-client app is specifically configured for Corvane Fleet. Full per-question
+head-to-head replacement analysis, competitor fact alerts, source-level citation analysis, board
+report export, multi-client operations, a single-command web launcher, and a deployed public URL
+are not delivered. See [`docs/CASE_STUDY_REQUIREMENTS.md`](docs/CASE_STUDY_REQUIREMENTS.md) for the
+requirement-by-requirement status.
+
+## AI-assisted development
+
+Codex and AI-assisted development were used for implementation, debugging, test generation,
+frontend iteration, API integration, and documentation review. Generated suggestions were checked
+against the source pack, code, tests, and human-review results rather than accepted as ground truth.
+The manual comparison exposed four tone mismatches, and the corpus contains both `response_text`
+and `answer` schemas plus timeout/duplicate cases. Those are retained as known limitations and
+explicit parser/test cases; no AI tool independently produced or verified a perfect result.
+
+## Daily operations for 20 clients
+
+A practical daily cycle would collect the latest responses for each client's agreed question,
+engine, and run panel; load that week's JSONL; validate schema, prompt IDs, failures, and coverage;
+then review score movement and its evidence before opening wrong-fact alerts and important changed
+answers. The operator would confirm claims against each client's approved facts, document unresolved
+items, and export the CSV/JSON results for reporting. Collection and review need an owner and a
+repeatable schedule; no scheduled collector is included here.
+
+The tool itself has no paid AI inference dependency. Its operating costs are ordinary compute,
+persistent storage, and hosting if deployed; scheduled collection added later may have separate
+provider or operator costs. No vendor bill is estimated here. The current app is a single Corvane
+workspace, not a 20-client service. A real 20-client rollout would need isolated base/config/run
+storage per client and operational access controls; those multi-client features are not
+implemented.
+
+Keep each client's original source pack immutable, store each uploaded JSONL as a separate run,
+retain that run's generated CSV/JSON snapshot, and keep its active/deleted state in the SQLite
+registry on persistent storage. This provides an audit trail while allowing active results to be
+recomputed. For an engine format change, normalize known aliases into the canonical record,
+preserve raw fields and schema/validation issues, and reject malformed uploads rather than silently
+scoring them. Add a fixture and parser test for every newly observed format. A major schema change
+belongs in normalization, not in scoring.
+
+## Exports
+
+- **`mentions.csv`** — `response_id,brand,mentioned,position,tone`; one row for each response and
+  each of the six configured companies. Useful for assessment and spreadsheet-level mention,
+  position, and tone review.
+- **`wrong_facts.csv`** — `response_id,brand,fact_key,claim_text`; each supported contradiction
+  currently detected for Corvane, linked to its response. Uncovered claims are unverified, not
+  wrong.
+- **`dashboard_data.json`** — scores, coverage/comparisons, drivers, alerts, and normalized answer
+  records used by the frontend and available for downstream analysis.
+
+The upload page downloads these three outputs. Other pipeline artifacts include `analytics.json`,
+`evaluation.json`, `quality_report.json`, and the human-review files.
+
+## Upload history and deployment
+
+Every successful upload gets a unique ID and a folder containing its input plus dashboard and CSV
+snapshots. Deleting a run changes its registry state and recomputes the active dataset; it does not
+remove the run folder. Locally the registry and latest outputs are under project-root `outputs/`.
+On Render they are under `/var/data/outputs/` when a persistent disk is mounted at `/var/data`.
+The registry file is `outputs/upload_registry.sqlite3` locally and
+`/var/data/outputs/upload_registry.sqlite3` on Render. A run's local files are in
+`outputs/uploads/<upload_id>/`; on Render they are in
+`/var/data/outputs/uploads/<upload_id>/`. Configure `CORVANE_OUTPUT_DIR` for the backend and
+`VITE_API_URL` at frontend build time. Vercel and Render settings are documented in
+[`DEPLOYMENT.md`](DEPLOYMENT.md); the app has not been deployed as part of this case study.
+There is no automatic artifact expiration: define an operational retention policy separately if
+storage needs to be reclaimed, because the application's Delete action intentionally preserves
+run files.
+
+## Testing
+
+Run from the repository root for the backend, and from `frontend/` for frontend commands:
+
+```powershell
+python -m unittest discover -s backend/tests -v
+cd frontend
+npm.cmd test
+npx.cmd tsc --noEmit
+npm.cmd run build
+```
+
+The backend tests cover normalization, mention/position/tone rules, supported fact checks, scoring,
+coverage, exports, future-week loading, upload validation, active-run recomputation, soft deletion,
+and restoration of the base dataset.
+
+## Project structure
+
+```text
+backend/       Python pipeline, CLI, FastAPI layer, config, and tests
+docs/          scoring, data, assumptions, Marcus note, and case-study status
+extras/        original brief and immutable Corvane data pack
+frontend/      React/Vite dashboard, Answer Explorer, upload, and run history
+outputs/       local generated exchange files, upload snapshots, and SQLite registry
+Dockerfile     Render backend image
+DEPLOYMENT.md  local, Vercel, and Render setup
+```

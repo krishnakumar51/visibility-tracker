@@ -1,0 +1,2 @@
+- Keep the AI-visibility demo dataset in one typed module with a filter helper so a future pipeline JSON adapter has one clear boundary.
+- Keep the overview and answer explorer as separate shareable routes within one shared dashboard shell so each view is directly accessible.

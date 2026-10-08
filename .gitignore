@@ -152,6 +152,8 @@ activemq-data/
 # Environments
 .env
 .envrc
+.env.*
+!.env.example
 .venv
 env/
 venv/
@@ -219,7 +221,18 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+# Uploaded weekly response history and per-run outputs are deployment data, not source code.
+outputs/uploads/
+outputs/upload_registry.sqlite3*
+
 
 extras/
-docs/
 .vscode/
+
+# The immutable base pack is required by the local pipeline and Render image.
+!extras/
+!extras/corvane_data_pack/
+!extras/corvane_data_pack/responses.jsonl
+!extras/corvane_data_pack/prompts.csv
+!extras/corvane_data_pack/brands.json
+!extras/corvane_data_pack/facts.json

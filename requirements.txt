@@ -1,1 +1,0 @@
-# The pipeline and test suite use only the Python standard library.

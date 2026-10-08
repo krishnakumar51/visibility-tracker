@@ -1,0 +1,84 @@
+{
+  "_note": "fact_key in wrong_facts.csv is the dotted path to the entry a claim contradicts, e.g. starting_price_usd, hq, founded, features.dashcams, integrations",
+  "corvane": {
+    "name": "Corvane Fleet",
+    "website": "corvanefleet.com",
+    "starting_price_usd": 29,
+    "price_unit": "per vehicle per month",
+    "hq": "Columbus, Ohio",
+    "founded": 2014,
+    "features": {
+      "gps_tracking": true,
+      "eld_compliance": true,
+      "fuel_card_integration": true,
+      "maintenance_alerts": true,
+      "driver_app": true,
+      "dashcams": false,
+      "payroll": false
+    },
+    "integrations": [
+      "QuickBooks",
+      "WEX",
+      "Comdata"
+    ]
+  },
+  "trakvia": {
+    "name": "Trakvia",
+    "website": "trakvia.com",
+    "starting_price_usd": 39,
+    "price_unit": "per vehicle per month",
+    "hq": "Austin, Texas",
+    "founded": 2016,
+    "features": {
+      "gps_tracking": true,
+      "eld_compliance": true,
+      "fuel_card_integration": false,
+      "maintenance_alerts": true,
+      "driver_app": true,
+      "dashcams": true,
+      "payroll": false
+    },
+    "integrations": [
+      "Salesforce"
+    ]
+  },
+  "routelyne": {
+    "name": "Routelyne",
+    "website": "routelyne.com",
+    "starting_price_usd": 19,
+    "price_unit": "per vehicle per month",
+    "hq": "Phoenix, Arizona",
+    "founded": 2019,
+    "features": {
+      "gps_tracking": true,
+      "eld_compliance": false,
+      "fuel_card_integration": false,
+      "maintenance_alerts": false,
+      "driver_app": true,
+      "dashcams": false,
+      "payroll": false
+    },
+    "integrations": []
+  },
+  "gridwell": {
+    "name": "Gridwell Systems",
+    "website": "gridwell.io",
+    "starting_price_usd": 55,
+    "price_unit": "per vehicle per month",
+    "hq": "Chicago, Illinois",
+    "founded": 2008,
+    "features": {
+      "gps_tracking": true,
+      "eld_compliance": true,
+      "fuel_card_integration": true,
+      "maintenance_alerts": true,
+      "driver_app": true,
+      "dashcams": true,
+      "payroll": false
+    },
+    "integrations": [
+      "SAP",
+      "Oracle"
+    ]
+  }
+}

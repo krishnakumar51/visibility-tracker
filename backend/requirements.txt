@@ -1,0 +1,4 @@
+# The pipeline stays standard-library-only; these packages run the upload web layer.
+fastapi>=0.115,<1
+python-multipart>=0.0.9,<1
+uvicorn>=0.30,<1
